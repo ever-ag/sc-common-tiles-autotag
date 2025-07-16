@@ -28,16 +28,29 @@ under the License.
     </parent>
 
     <!-- temporary only while parent pom is snapshot -->
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <id>apache.snapshots</id>
-      <name>Apache Snapshot Repository</name>
-      <url>https://repository.apache.org/snapshots</url>
-    </repository>
-  </repositories>
+<!--  <repositories>-->
+<!--    <repository>-->
+<!--      <releases>-->
+<!--        <enabled>false</enabled>-->
+<!--      </releases>-->
+<!--      <id>apache.snapshots</id>-->
+<!--      <name>Apache Snapshot Repository</name>-->
+<!--      <url>https://repository.apache.org/snapshots</url>-->
+<!--    </repository>-->
+<!--  </repositories>-->
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/ever-ag/all</url>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/ever-ag/sc-common-tiles-autotag</url>
+        </repository>
+    </distributionManagement>
 
     <groupId>org.apache.tiles</groupId>
     <artifactId>tiles-autotag</artifactId>
@@ -66,16 +79,16 @@ under the License.
         <module>maven-autotag-plugin</module>
         <module>assembly</module>
     </modules>
-    <distributionManagement>
-        <site>
-            <id>apache-site</id>
-            <url>scm:svn:https://svn.apache.org/repos/asf/tiles/site/staging/tiles-autotag</url>
-        </site>
-        <snapshotRepository>
-          <id>ossrh</id>
-          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+<!--    <distributionManagement>-->
+<!--        <site>-->
+<!--            <id>apache-site</id>-->
+<!--            <url>scm:svn:https://svn.apache.org/repos/asf/tiles/site/staging/tiles-autotag</url>-->
+<!--        </site>-->
+<!--        <snapshotRepository>-->
+<!--          <id>ossrh</id>-->
+<!--          <url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -119,6 +132,33 @@ under the License.
     </dependencyManagement>
     <build>
         <plugins>
+<!--     Override this plugin as in parent(tile-master) it's enforcing java 8 and 9      -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-java</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[8, )</version>
+                                </requireJavaVersion>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.24</version>
+            </plugin>
 <!--
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
@@ -138,17 +178,18 @@ under the License.
                 </configuration>
             </plugin>
 
-            <plugin>
-              <groupId>org.sonatype.plugins</groupId>
-              <artifactId>nexus-staging-maven-plugin</artifactId>
-              <version>1.7.0</version>
-              <extensions>true</extensions>
-              <configuration>
-                <serverId>ossrh</serverId>
-                <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                <autoReleaseAfterClose>true</autoReleaseAfterClose>
-              </configuration>
-            </plugin>
+            <!--      in mvn deploy this is giving error so commented -->
+<!--            <plugin>-->
+<!--              <groupId>org.sonatype.plugins</groupId>-->
+<!--              <artifactId>nexus-staging-maven-plugin</artifactId>-->
+<!--              <version>1.7.0</version>-->
+<!--              <extensions>true</extensions>-->
+<!--              <configuration>-->
+<!--                <serverId>ossrh</serverId>-->
+<!--                <nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
+<!--                <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+<!--              </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
